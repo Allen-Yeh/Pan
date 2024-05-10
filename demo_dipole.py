@@ -66,19 +66,21 @@ from plotter import *
 
 # 定義參數
 width = 1
-length = 2
-nx = 1
-ny = 10
+length = 1
+nx = 2
+ny = 2
 
 #定義複製項
-num_x_copies = 3
-x_spacing = 3
-num_y_copies = 3
-y_spacing =3
+num_x_copies = 4
+x_spacing = 1
+num_y_copies = 4
+y_spacing =2
 
 # # 使用 Mesh 類別生成網格
 structure = mesh.Mesh('dipole', 'plate', width, length, nx, ny,num_x_copies, x_spacing, num_y_copies, y_spacing)
 structure._replicate_plate([width, length, nx, ny, num_x_copies, x_spacing, num_y_copies, y_spacing])
+
+
 
 # 設置 `densities` 屬性。這裡以預設值 1.0 作為示例，可以根據具體需求調整
 structure.densities = [1.0] * structure.triangles_total

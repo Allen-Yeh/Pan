@@ -49,13 +49,44 @@ class GraphStruct(Graph):
         colors = self.ax.tripcolor(x, y, triangles, densities)
         self.fig.colorbar(colors)
         self._options(filepath, filename, shown)
-        
-    def plotPoly(self, points, filename = "poly.png", filepath = "./results/", xlabel = 'x', ylabel = 'y', shown = True):
-        x = [each[0] for each in points]
-        y = [each[1] for each in points]
-        self.ax.set_title("poly", loc='center')        
-        self.ax.plot(x, y)
+
+
+    
+    def plotPoly(self, structure, filename="poly.png", filepath="./results/", xlabel='x', ylabel='y', shown=True):
+        """繪製多個多邊形的外部邊框。"""
+        # 使用集合來保持唯一性，並標記每個邊界的邊次數
+        edge_count = {}
+        for triangle in structure.triangles:
+            edges = [
+                (min(triangle[0], triangle[1]), max(triangle[0], triangle[1])),
+                (min(triangle[1], triangle[2]), max(triangle[1], triangle[2])),
+                (min(triangle[0], triangle[2]), max(triangle[0], triangle[2]))
+            ]
+            for edge in edges:
+                if edge in edge_count:
+                    edge_count[edge] += 1
+                else:
+                    edge_count[edge] = 1
+
+        # 只繪製外部邊框的邊，即出現次數為 1 的邊
+        for edge, count in edge_count.items():
+            if count == 1:
+                x = [structure.points[edge[0]][0], structure.points[edge[1]][0]]
+                y = [structure.points[edge[0]][1], structure.points[edge[1]][1]]
+                self.ax.plot(x, y, 'b-')  # 'b-' 表示藍色實線
+
+        # print("只繪製多邊形的外部邊框")
+        self.ax.set_title("poly", loc='center')
         self._options(filepath, filename, shown)
+
+ 
+        
+    # def plotPoly(self, points, filename = "poly.png", filepath = "./results/", xlabel = 'x', ylabel = 'y', shown = True):
+    #     x = [each[0] for each in points]
+    #     y = [each[1] for each in points]
+    #     self.ax.set_title("poly", loc='center')        
+    #     self.ax.plot(x, y)
+    #     self._options(filepath, filename, shown)
 
     def plot2Dmesh(self, points, triangles, centers = None, filename =  "mesh.png", filepath = "./results/", keepout_ratio = 1.02, xlabel = 'x', ylabel = 'y', shown = True):
         ## -- Prepare data and plot
@@ -80,20 +111,44 @@ class GraphStruct(Graph):
             self.ax.text(each[0], each[1], str(k), fontsize = 8)
        
     
+
+
+
+
 def plotAll(structure, densities):
     name = structure.name
-    v = structure.vertices
     p = structure.points
     t = structure.triangles
     c = structure.center
 
     polygon = GraphStruct()
-    polygon.plotPoly(v, filename = name + "_" + "poly.png" )
-    
+    polygon.plotPoly(structure, filename=name + "_" + "poly.png")
+
     mesh = GraphStruct()
-    mesh.plot2Dmesh(p, t, c, filename = name + "_" + "mesh.png" )
+    mesh.plot2Dmesh(p, t, c, filename=name + "_" + "mesh.png")
 
     density = GraphStruct()
-    density.plotDensity(p, t, densities, filename = name + "_" + "densities.png" )
+    density.plotDensity(p, t, densities, filename=name + "_" + "densities.png")
+
+
+
+
+
+
+# def plotAll(structure, densities):
+#     name = structure.name
+#     v = structure.vertices
+#     p = structure.points
+#     t = structure.triangles
+#     c = structure.center
+
+#     polygon = GraphStruct()
+#     polygon.plotPoly(v, filename = name + "_" + "poly.png" )
+    
+#     mesh = GraphStruct()
+#     mesh.plot2Dmesh(p, t, c, filename = name + "_" + "mesh.png" )
+
+#     density = GraphStruct()
+#     density.plotDensity(p, t, densities, filename = name + "_" + "densities.png" )
     
     

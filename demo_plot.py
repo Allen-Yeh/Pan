@@ -25,10 +25,9 @@ else:
     with open("./results/" + mesh_to_plot + "_strct.pkl", 'rb') as file_strct:
         structure = pickle.load(file_strct)
         structure.center = None
-        # print("triangles:", structure.triangles)
-        plotAll(structure, structure.densities)
         
-
+        plotAll(structure, structure.densities)
+    
 
 
     # with open("./results/" + mesh_to_plot + "_pattern.pkl", 'rb') as file_pattern:

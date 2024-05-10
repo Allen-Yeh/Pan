@@ -82,28 +82,53 @@ class Mesh(object):
             raise ValueError("僅支援對 'plate' 幾何形狀的網格進行複製。")
 
         num_x_copies = int(dlist[4])
-        x_spacing = int(dlist[5])
+        x_spacing = float(dlist[5])
         num_y_copies = int(dlist[6])
-        y_spacing = int(dlist[7])
+        y_spacing = float(dlist[7])
 
         replicated_triangles = []
-        replicated_points = []
+        replicated_points = list(self.points)  # 首先保留初始的點
+        num_original_points = len(self.points)
+
+        # 初始天線的點和三角形數量
+        # print(f"初始點數量: {num_original_points}")
+        # print(f"初始三角形數量: {len(self.triangles)}")
 
         for i in range(num_x_copies):
             for j in range(num_y_copies):
+                if i == 0 and j == 0:
+                    # 跳過初始的第一組
+                    continue
+
                 # 計算此次複製的偏移量
                 x_offset = i * x_spacing
                 y_offset = j * y_spacing
 
-                # 使用計算出的偏移量複製點和三角形
-                for v in self.triangles:
-                    replicated_triangles.append([v_i + len(replicated_points) for v_i in v])
-                    replicated_points.extend([(x + x_offset, y + y_offset) for x, y in self.points])
+                # 複製點並添加到點列表中
+                replicated_points.extend([(x + x_offset, y + y_offset) for x, y in self.points])
 
-        # 使用複製後的點和三角形更新 Mesh 物件的屬性
-        self.triangles = replicated_triangles
+                # 複製三角形，並更新其頂點索引
+                num_points = num_original_points * (i + j * num_x_copies)
+                for triangle in self.triangles:
+                    replicated_triangle = [v + num_points for v in triangle]
+                    replicated_triangles.append(replicated_triangle)
+
+                # 當前複製的位移和結果
+                # print(f"已在偏移 ({x_offset}, {y_offset}) 複製一組")
+                # print(f"複製後的點數量: {len(replicated_points)}")
+                # print(f"複製後的三角形數量: {len(replicated_triangles)}")
+
+        # 更新 Mesh 物件的屬性
+        self.triangles = replicated_triangles + self.triangles
         self.points = replicated_points
         self.triangles_total = len(self.triangles)
+
+        # 打印總結果
+        # print(f"總共複製組數: {num_x_copies * num_y_copies}")
+        # print(f"總點數量: {len(self.points)}")
+        # print(f"總三角形數量: {len(self.triangles)}")
+
+
 
 
 
