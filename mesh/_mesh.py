@@ -3,7 +3,7 @@ import dmsh as dm
 from pyhull.delaunay import DelaunayTri
 import numpy as np
 from .poly import Poly
-
+import warnings
 class Mesh(object):
     """Mesh Generator          
     Inputs: initialize by object = Mesh("mesh name", string of mesh methods, list of parameters)
@@ -40,10 +40,11 @@ class Mesh(object):
         self.dlist = argv  ## dimension list
         self.tri = None
 
+        # 初始化所有字段為空列表
         for each in Mesh._fields:
             setattr(self, each, [])
 
-
+        # 初始化天線尺寸並設置網格
         exec('self._' + geometry + '(self.dlist)')
 
 
@@ -51,6 +52,8 @@ class Mesh(object):
         """Trianularize with pyhull Delaunay algorithm."""
         width = float(dlist[0])
         length = float(dlist[1])
+        self.width = width  # 保存寬度
+        self.length = length  # 保存長度
         half_w = width/2
         half_l = length/2
         nx = dlist[2]
@@ -84,23 +87,25 @@ class Mesh(object):
         num_x_copies = int(dlist[4])
         x_spacing = float(dlist[5])
         num_y_copies = int(dlist[6])
-        y_spacing = float(dlist[7])
+        y_spacing = float (dlist[7])
+
+        # 檢查間隔是否足夠
+        if x_spacing <= self.width or y_spacing <= self.length:
+            warnings.warn(f"x_spacing ({x_spacing}) 必須至少大於天線的寬度 ({self.width})，"
+                          f"y_spacing ({y_spacing}) 必須至少大於天線的長度 ({self.length})。"
+                          " 複製操作將被跳過。")
+            return
 
         replicated_triangles = []
-        replicated_points = list(self.points)  # 首先保留初始的點
+        replicated_points = list(self.points)
         num_original_points = len(self.points)
-
-        # 初始天線的點和三角形數量
-        # print(f"初始點數量: {num_original_points}")
-        # print(f"初始三角形數量: {len(self.triangles)}")
 
         for i in range(num_x_copies):
             for j in range(num_y_copies):
                 if i == 0 and j == 0:
-                    # 跳過初始的第一組
                     continue
 
-                # 計算此次複製的偏移量
+                # 計算複製的偏移量
                 x_offset = i * x_spacing
                 y_offset = j * y_spacing
 
@@ -113,23 +118,10 @@ class Mesh(object):
                     replicated_triangle = [v + num_points for v in triangle]
                     replicated_triangles.append(replicated_triangle)
 
-                # 當前複製的位移和結果
-                # print(f"已在偏移 ({x_offset}, {y_offset}) 複製一組")
-                # print(f"複製後的點數量: {len(replicated_points)}")
-                # print(f"複製後的三角形數量: {len(replicated_triangles)}")
-
         # 更新 Mesh 物件的屬性
         self.triangles = replicated_triangles + self.triangles
         self.points = replicated_points
         self.triangles_total = len(self.triangles)
-
-        # 打印總結果
-        # print(f"總共複製組數: {num_x_copies * num_y_copies}")
-        # print(f"總點數量: {len(self.points)}")
-        # print(f"總三角形數量: {len(self.triangles)}")
-
-
-
 
 
     # def _plate2(self, dlist):

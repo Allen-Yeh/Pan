@@ -72,7 +72,7 @@ ny = 2
 
 #定義複製項
 num_x_copies = 4
-x_spacing = 1
+x_spacing = 1.1
 num_y_copies = 4
 y_spacing =2
 
