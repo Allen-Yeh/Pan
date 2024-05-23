@@ -6,11 +6,6 @@ from .poly import Poly
 import warnings
 
 
-# def remove_near_duplicates(vertices, tolerance=1e-6):
-#     """移除距離小於公差的重複頂點。"""
-#     vertices = np.array(vertices)
-#     _, unique_indices = np.unique(np.round(vertices / tolerance), axis=0, return_index=True)
-#     return vertices[sorted(unique_indices)].tolist()
 
 class Mesh(object):
     """Mesh Generator          
@@ -96,20 +91,6 @@ class Mesh(object):
         x_spacing = float(dlist[5])
         num_y_copies = int(dlist[6])
         y_spacing = float (dlist[7])
-
-
-        # 檢查複製次數是否有效
-        if num_x_copies < 1 or num_y_copies < 1:
-            warnings.warn(f"num_x_copies ({num_x_copies}) 和 num_y_copies ({num_y_copies}) 必須至少大於等於1。"
-                      " 複製操作將被跳過。")
-            return
-
-        # 檢查間隔是否足夠
-        if x_spacing <= self.width or y_spacing <= self.length:
-            warnings.warn(f"x_spacing ({x_spacing}) 必須至少大於天線的寬度 ({self.width})，"
-                          f"y_spacing ({y_spacing}) 必須至少大於天線的長度 ({self.length})。"
-                          " 複製操作將被跳過。")
-            return
 
         replicated_triangles = []
         replicated_points = list(self.points)
