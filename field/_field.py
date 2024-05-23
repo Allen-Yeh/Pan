@@ -12,6 +12,8 @@ from rwg import *
 
 def point(Ro, K, eta, dplctr, dplmmt):
     """Calculate field at a point.  Inputs are Ro(obervation coordinate), K(wave number), dplctr(dipole Center, dplmmt(dipole moment)."""
+    dplctr = list(dplctr)
+    dplmmt = list(dplmmt)
     r = []
     PointRM = []
     EXP = []
@@ -57,11 +59,11 @@ class Field(object):
         centers = strct.center
         pts_plus = [centers[each] for each in strct.triangle_plus]
         pts_minus =[centers[each] for each in strct.triangle_minus]
-        pts_mp = map(lambda x, y: y - x, pts_plus, pts_minus)
+        pts_mp = list(map(lambda x, y: y - x, pts_plus, pts_minus))
         
         ## dipole center and dipole momentq
-        self.dplctr = list(map(lambda x, y: (x + y)*0.5, pts_plus, pts_minus))  # 轉換為列表
-        self.dplmmt = list(map(lambda I, edge, r: r*I*edge, Im, strct.edge_length, pts_mp))  # 轉換為列表
+        self.dplctr = list(map(lambda x, y: (x + y) * 0.5, pts_plus, pts_minus))
+        self.dplmmt = list(map(lambda I, edge, r: r * I * edge, Im, strct.edge_length, pts_mp))
         self.freq = Isource.freq
         self.K = 2*PI/strct.speed_of_light*self.freq
         self.eta = strct.eta

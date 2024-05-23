@@ -30,11 +30,11 @@ else:
     
 
 
-    # with open("./results/" + mesh_to_plot + "_pattern.pkl", 'rb') as file_pattern:
-    #     p = pickle.load(file_pattern)
-    #     g1 = GraphPattern2D()
-    #     g1.plot2Dcut(p.angles(), p.xy, rmax = p.directivity_dB, rmin = -20, filename = structure.name + '_xy.png')
-    #     g2 = GraphPattern2D()
-    #     g2.plot2Dcut(p.angles(), p.yz, rmax = p.directivity_dB, rmin = -20, filename = structure.name + '_yz.png')
-    #     g3 = GraphPattern2D()
-    #     g3.plot2Dcut(p.angles(), p.zx, rmax = p.directivity_dB, rmin = -20, filename = structure.name + '_zx.png')
+    with open("./results/" + mesh_to_plot + "_pattern.pkl", 'rb') as file_pattern:
+        p = pickle.load(file_pattern)
+        g1 = GraphPattern2D()
+        g1.plot2Dcut(p.angles(), p.xy, rmax = p.directivity_dB, rmin = -20, filename = structure.name + '_xy.png')
+        g2 = GraphPattern2D()
+        g2.plot2Dcut(p.angles(), p.yz, rmax = p.directivity_dB, rmin = -20, filename = structure.name + '_yz.png')
+        g3 = GraphPattern2D()
+        g3.plot2Dcut(p.angles(), p.zx, rmax = p.directivity_dB, rmin = -20, filename = structure.name + '_zx.png')

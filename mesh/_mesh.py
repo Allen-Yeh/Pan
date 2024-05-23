@@ -4,6 +4,14 @@ from pyhull.delaunay import DelaunayTri
 import numpy as np
 from .poly import Poly
 import warnings
+
+
+# def remove_near_duplicates(vertices, tolerance=1e-6):
+#     """移除距離小於公差的重複頂點。"""
+#     vertices = np.array(vertices)
+#     _, unique_indices = np.unique(np.round(vertices / tolerance), axis=0, return_index=True)
+#     return vertices[sorted(unique_indices)].tolist()
+
 class Mesh(object):
     """Mesh Generator          
     Inputs: initialize by object = Mesh("mesh name", string of mesh methods, list of parameters)
@@ -123,6 +131,33 @@ class Mesh(object):
         self.points = replicated_points
         self.triangles_total = len(self.triangles)
 
+    
+    # def _poly(self, dlist):
+    #     """使用 dmsh 生成任意多邊形的三角形網格。"""
+    #     vertices = dlist[0]  # 多邊形的頂點
+    #     edge_size = dlist[1]  # 邊緣目標大小
+
+    #     # 檢查並移除重複頂點
+    #     vertices = remove_near_duplicates(vertices)
+
+    #     # 檢查多邊形頂點的 x 和 y 邊界範圍
+    #     x_coords = [v[0] for v in vertices]
+    #     y_coords = [v[1] for v in vertices]
+    #     self.x_extent = [min(x_coords), max(x_coords)]
+    #     self.y_extent = [min(y_coords), max(y_coords)]
+    #     self.maxdim = max([abs(x) for x in self.x_extent] + [abs(y) for y in self.y_extent])
+
+    #     # 使用 dmsh 的 Polygon 類來定義多邊形
+    #     polygon = dm.Polygon(vertices)
+
+    #     # 使用 dmsh 生成三角形網格
+    #     points, triangles = dm.generate(polygon, edge_size)
+
+    #     # 更新 Mesh 對象的屬性
+    #     self.vertices = vertices
+    #     self.triangles = [tuple(triangle) for triangle in triangles]
+    #     self.points = points
+    #     self.triangles_total = len(triangles)
 
     # def _plate2(self, dlist):
     #     """Triangularize with MIT Per-Olof, Prof. Gilbert Strange's algorithm."""
@@ -150,6 +185,7 @@ class Mesh(object):
     #     self.points = pnt
     #     self.triangles = [tuple(each) for each in self.triangles]
     #     self.triangles_total = len(self.triangles)
+
 
     # def _poly(self, dlist):
     #     """Triangularize arbitrary shape of polygon with MIT Per-Olof, Prof. Gilbert Strange's algorithm."""

@@ -27,8 +27,8 @@ class GraphPattern2D(Graph):
 
     def plot2Dcut(self, angles, pattern, filename = "2Dcut.png", filepath = "./results/", shown = True, rmax = 5, rmin = -20, step = 5):
         self.ax.plot(angles, pattern, color='r', linewidth=3)
-#        self.ax.set_rmax(rmax+2)
-#        self.ax.set_rmin(rmin)
+        # self.ax.set_rmax(rmax+2)
+        # self.ax.set_rmin(rmin)
         self.ax.set_yticks([rmin + step*each for each in range(int((rmax-rmin)/5)+2)])
         self.ax.grid(True)
         self._options(filepath, filename, shown)        
@@ -111,8 +111,6 @@ class GraphStruct(Graph):
             self.ax.text(each[0], each[1], str(k), fontsize = 8)
        
     
-
-
 
 
 def plotAll(structure, densities):

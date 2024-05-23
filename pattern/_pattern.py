@@ -30,9 +30,7 @@ class Pattern(object):
         self.iso_density = 0.0
 
     def angles(self, span = 360, unit = 'rad'):
-        # t = [each*self.step for each in range(span/self.step + 1)]  chage int
-        t = [each * int(self.step) for each in range(span // int(self.step) + 1)]
-
+        t = [each * self.step for each in range(int(span / self.step) + 1)]
         if unit == 'rad':
             return [each/180.0*PI for each in t]
         else:
@@ -69,15 +67,15 @@ class Pattern(object):
         return xycut, yzcut, zxcut
             
     def _measure(self):
-        nof_phi = 360/self.step
-        nof_theta = 180/self.step
+        nof_phi = int(360 / self.step)
+        nof_theta = int(180 / self.step)
         step = self.step/180.0*PI
         half_step = step/2
         distance = self.distance
         sphere_convex = distance*distance*4*PI
 
         pre_partial_sphere = 0.0
-        for theta_no in range(int(nof_theta)+1):
+        for theta_no in range(nof_theta+1):
             theta = self.step*theta_no
             self.data_densities[theta] = []
             if theta_no == nof_theta:
@@ -85,7 +83,7 @@ class Pattern(object):
             else:
                 partial_sphere = 1-cos(half_step + step*theta_no) ## 360 degree is 4PI solid angle
 
-            for phi_no in range(int(nof_phi)):
+            for phi_no in range(nof_phi):
                 area = (partial_sphere - pre_partial_sphere) / nof_phi / 2 * sphere_convex
 
                 phi = self.step*phi_no
@@ -107,8 +105,9 @@ class Pattern(object):
         self.directivity = self.max_density/self.iso_density
         self.directivity_dB = 10*log10(self.directivity)
         self._gain()
-        print ("TRP = {0} Watt, D = {1}, {2} dB".format(self.TRP, self.directivity, self.directivity_dB))
+        print("TRP = {0} Watt, D = {1}, {2} dB".format(self.TRP, self.directivity, self.directivity_dB))
 
+        
 if __name__ == "__main__":
 
     freq = 75.0 #MHz

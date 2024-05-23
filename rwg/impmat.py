@@ -8,7 +8,6 @@ from .matrix import zeros
 from .matrix import fill
 
 import numpy as np
-from .vector import Vector
 
 class Element(object):
 
@@ -74,11 +73,8 @@ def impmat(structure, freq):
                 source = structure.rho__minus
                 func = lambda x, y: x-y
             src = source[n]
-            rho_p = [[Vector(each).dot(structure.rho_plus[row]) for each in src] for row in range(edges_total)]
-            rho_m = [[Vector(each).dot(structure.rho_minus[row]) for each in src] for row in range(edges_total)]
-
-            # rho_p = [[each.dot(structure.rho_plus[row]) for each in src] for row in range(edges_total)]
-            # rho_m = [[each.dot(structure.rho_minus[row])for each in src] for row in range(edges_total)]
+            rho_p = [[each.dot(structure.rho_plus[row]) for each in src] for row in range(edges_total)]
+            rho_m = [[each.dot(structure.rho_minus[row])for each in src] for row in range(edges_total)]
             # dim of rho_p and rho_m: no of triangles x 9 sub's
 
             area = []

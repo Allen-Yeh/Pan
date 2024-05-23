@@ -55,12 +55,6 @@ def find_free_nodes(tri_plus, tri_minus):
     return free_node_p, free_node_m
 
 
-def subtract_p_from_center(p, center):
-    return [center_coord - p_coord for p_coord, center_coord in zip(p, center)]
-
-def subtract_center_from_p(center, p):
-    return [p_coord - center_coord for p_coord, center_coord in zip(p, center)]
-
 ## the onset of the rwg2
 def rwg2(structure):
     center = structure.center
@@ -104,10 +98,7 @@ def rwg2(structure):
         free_plus, free_minus = find_free_nodes((p1, p2, p3), (n1, n2, n3))
         structure.rho_plus.append(center[plus_no] - p[free_plus])
         structure.rho_minus.append(p[free_minus] - center[minus_no])
-        # structure.rho__plus.append(map(lambda x: x-p[free_plus], center_[plus_no]))
-        # structure.rho__minus.append(map(lambda x: p[free_minus] - x, center_[minus_no]))
-        # 在 rwg2 函數中使用新的函數定義
-        structure.rho__plus.append(map(subtract_p_from_center, center_[plus_no], [p[free_plus]]*len(center_[plus_no])))
-        structure.rho__minus.append(map(subtract_center_from_p, [p[free_minus]]*len(center_[minus_no]), center_[minus_no]))
+        structure.rho__plus.append(list(map(lambda x: x - p[free_plus], center_[plus_no])))
+        structure.rho__minus.append(list(map(lambda x: p[free_minus] - x, center_[minus_no])))
 
 
