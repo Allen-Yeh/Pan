@@ -41,15 +41,32 @@ class Pattern(object):
         self._prepare(step, distance)
         self._measure()
 
-    def _gain(self, data_type = 'dB'):
+
+    def _gain(self, data_type='dB'):
         self.data_gain = {}
-        for theta in [self.step*each for each in range(int(180/self.step)+1)]:
+        for theta in [self.step * each for each in range(int(180 / self.step) + 1)]:
             self.data_gain[theta] = []
             for each in self.data_densities[theta]:
-                gain = each/self.iso_density
+                gain = each / self.iso_density
                 if data_type == 'dB':
-                    gain = 10*log10(gain)
+                    if gain > 0:
+                        gain = 10 * log10(gain)
+                    else:
+                        print(f"Warning: gain is non-positive, cannot compute log10. gain Value: {gain}")
+                        gain = float('-inf')  # 或者設置為其他適合的錯誤值
                 self.data_gain[theta].append(gain)
+
+
+
+    # def _gain(self, data_type = 'dB'):
+    #     self.data_gain = {}
+    #     for theta in [self.step*each for each in range(int(180/self.step)+1)]:
+    #         self.data_gain[theta] = []
+    #         for each in self.data_densities[theta]:
+    #             gain = each/self.iso_density
+    #             if data_type == 'dB':
+    #                 gain = 10*log10(gain)
+    #             self.data_gain[theta].append(gain)
         
     def cut2D(self):
         thetas = [self.step*each for each in range(int(180/self.step)+1)]

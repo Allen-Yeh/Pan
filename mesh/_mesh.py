@@ -90,7 +90,27 @@ class Mesh(object):
         num_x_copies = int(dlist[4])
         x_spacing = float(dlist[5])
         num_y_copies = int(dlist[6])
-        y_spacing = float (dlist[7])
+        y_spacing = float(dlist[7])
+
+        # 新增印出語句以檢查各項變數的傳入值
+        print(f"num_x_copies: {num_x_copies}")
+        print(f"x_spacing: {x_spacing}")
+        print(f"num_y_copies: {num_y_copies}")
+        print(f"y_spacing: {y_spacing}")
+
+        print(f"self.points: [ (共 {len(self.points)} 個)")
+        for i, point in enumerate(self.points):
+            if i % 4 == 0 and i != 0:
+                print()  # 每4個點換行，增加可讀性
+            print(f"({point[0]:.3f}, {point[1]:.3f}), ", end="")
+        print("\b\b]")  # 移除最後的逗號和空格，並加上右括號
+
+        print(f"\nself.triangles: [ (共 {len(self.triangles)} 個)")
+        for i, triangle in enumerate(self.triangles):
+            if i % 4 == 0 and i != 0:
+                print()  # 每4個三角形換行，增加可讀性
+            print(f"{triangle}, ", end="")
+        print("\b\b]")  # 移除最後的逗號和空格，並加上右括號
 
         replicated_triangles = []
         replicated_points = list(self.points)
@@ -119,33 +139,25 @@ class Mesh(object):
         self.points = replicated_points
         self.triangles_total = len(self.triangles)
 
-    
-    # def _poly(self, dlist):
-    #     """使用 dmsh 生成任意多邊形的三角形網格。"""
-    #     vertices = dlist[0]  # 多邊形的頂點
-    #     edge_size = dlist[1]  # 邊緣目標大小
+        # 新增印出語句以顯示最終的結果
+        print(f"\nreplicated_triangles: [ (共 {len(replicated_triangles)} 個)")
+        for i, triangle in enumerate(replicated_triangles):
+            if i % 4 == 0 and i != 0:
+                print()  # 每4個三角形換行，增加可讀性
+            print(f"{triangle}, ", end="")
+        print("\b\b]")  # 移除最後的逗號和空格，並加上右括號
 
-    #     # 檢查並移除重複頂點
-    #     vertices = remove_near_duplicates(vertices)
+        print(f"\nreplicated_points: [ (共 {len(replicated_points)} 個)")
+        for i, point in enumerate(replicated_points):
+            if i % 4 == 0 and i != 0:
+                print()  # 每4個點換行，增加可讀性
+            print(f"({point[0]:.3f}, {point[1]:.3f}), ", end="")
+        print("\b\b]")  # 移除最後的逗號和空格，並加上右括號
 
-    #     # 檢查多邊形頂點的 x 和 y 邊界範圍
-    #     x_coords = [v[0] for v in vertices]
-    #     y_coords = [v[1] for v in vertices]
-    #     self.x_extent = [min(x_coords), max(x_coords)]
-    #     self.y_extent = [min(y_coords), max(y_coords)]
-    #     self.maxdim = max([abs(x) for x in self.x_extent] + [abs(y) for y in self.y_extent])
+        print(f"\ntriangles_total: {self.triangles_total}")
 
-    #     # 使用 dmsh 的 Polygon 類來定義多邊形
-    #     polygon = dm.Polygon(vertices)
 
-    #     # 使用 dmsh 生成三角形網格
-    #     points, triangles = dm.generate(polygon, edge_size)
-
-    #     # 更新 Mesh 對象的屬性
-    #     self.vertices = vertices
-    #     self.triangles = [tuple(triangle) for triangle in triangles]
-    #     self.points = points
-    #     self.triangles_total = len(triangles)
+   
 
     # def _plate2(self, dlist):
     #     """Triangularize with MIT Per-Olof, Prof. Gilbert Strange's algorithm."""
