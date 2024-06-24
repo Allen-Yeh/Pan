@@ -9,16 +9,16 @@ import numpy as np
 from plotter import *
 
 # 定義參數
-width = 0.15
-length = 0.15
-nx = 15
-ny = 15
+width = 0.05
+length = 2
+nx = 1
+ny = 10
 
 # 定義複製項 , num_x_copies=1 , num_y_copies=1 , 就是1x1天線
-num_x_copies = 5
-x_spacing = 0.2
-num_y_copies = 5
-y_spacing = 0.2
+num_x_copies = 2
+x_spacing = 1
+num_y_copies = 2
+y_spacing = 2.5
 
 # 防呆檢查
 def validate_params(num_x_copies, num_y_copies, x_spacing, y_spacing, width, length):
@@ -32,10 +32,10 @@ def validate_params(num_x_copies, num_y_copies, x_spacing, y_spacing, width, len
 # 執行防呆檢查
 validate_params(num_x_copies, num_y_copies, x_spacing, y_spacing, width, length)
 
-freq = 900
+freq = 75
 # 使用 Mesh 類別生成網格
 structure = mesh.Mesh('dipole', 'plate', width, length, nx, ny, num_x_copies, x_spacing, num_y_copies, y_spacing)
-structure._replicate_plate([width, length, nx, ny, num_x_copies, x_spacing, num_y_copies, y_spacing])
+
 
 print('\nrwg1')
 rwg.rwg1(structure)

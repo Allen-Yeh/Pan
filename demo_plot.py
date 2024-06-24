@@ -15,6 +15,7 @@ else:
         mesh_to_plot = 'dual_stub'
     elif number == '3':
         mesh_to_plot = 'patch'
+
     else:
         pass
     
@@ -27,6 +28,7 @@ else:
         structure.center = None
         
         plotAll(structure, structure.densities)
+
     
 
 

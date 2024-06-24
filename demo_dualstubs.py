@@ -53,9 +53,6 @@ for each in Jm:
     densities.append( (abs(each[0])**2 + abs(each[1])**2)**0.5 )
 structure.densities = densities
 
-import pickle
-with open("./results/dual_stub_strct.pkl", 'w') as file_strct:
-    pickle.dump(structure, file_strct)
 
 Isource = current.Current(freq)
 Isource.Im = [complex(each[0]) for each in np.linalg.solve(Z, Vx)]

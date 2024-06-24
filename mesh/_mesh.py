@@ -51,17 +51,17 @@ class Mesh(object):
         exec('self._' + geometry + '(self.dlist)')
 
 
-    def _plate(self, dlist):
+    def _plate(self, dlist, replicate=True):
         """Trianularize with pyhull Delaunay algorithm."""
         width = float(dlist[0])
         length = float(dlist[1])
         self.width = width  # 保存寬度
         self.length = length  # 保存長度
-        half_w = width/2
-        half_l = length/2
+        half_w = width / 2
+        half_l = length / 2
         nx = dlist[2]
         ny = dlist[3]
-        delta = 0.0#1e-6
+        delta = 0.0  # 1e-6
         x_coor = ()
         y_coor = ()
 
@@ -70,8 +70,8 @@ class Mesh(object):
         self.maxdim = max([abs(each) for each in self.x_extent + self.y_extent])
         for m in range(nx + 1):
             for n in range(ny + 1):
-                x_coor += (-width/2.0 + m * 1.0* width/nx,)
-                y_coor += (-length/2.0 + n * 1.0* length/ny,)
+                x_coor += (-width / 2.0 + m * 1.0 * width / nx,)
+                y_coor += (-length / 2.0 + n * 1.0 * length / ny,)
 
         points = list(zip(x_coor, y_coor))
         tri = DelaunayTri(points)
@@ -81,80 +81,39 @@ class Mesh(object):
         self.triangles = [tuple(each) for each in self.triangles]
         self.triangles_total = len(self.triangles)
 
+        if replicate:
+            num_x_copies = int(dlist[4])
+            x_spacing = float(dlist[5])
+            num_y_copies = int(dlist[6])
+            y_spacing = float(dlist[7])
 
-    def _replicate_plate(self, dlist):
-        """複製由 _plate 方法生成的網格。"""
-        if self.geometry != 'plate':
-            raise ValueError("僅支援對 'plate' 幾何形狀的網格進行複製。")
+            replicated_triangles = []
+            replicated_points = list(self.points)
+            num_original_points = len(self.points)
 
-        num_x_copies = int(dlist[4])
-        x_spacing = float(dlist[5])
-        num_y_copies = int(dlist[6])
-        y_spacing = float(dlist[7])
+            for i in range(num_x_copies):
+                for j in range(num_y_copies):
+                    if i == 0 and j == 0:
+                        continue
 
-        # 新增印出語句以檢查各項變數的傳入值
-        print(f"num_x_copies: {num_x_copies}")
-        print(f"x_spacing: {x_spacing}")
-        print(f"num_y_copies: {num_y_copies}")
-        print(f"y_spacing: {y_spacing}")
+                    # 計算複製的偏移量
+                    x_offset = i * x_spacing
+                    y_offset = j * y_spacing
 
-        print(f"self.points: [ (共 {len(self.points)} 個)")
-        for i, point in enumerate(self.points):
-            if i % 4 == 0 and i != 0:
-                print()  # 每4個點換行，增加可讀性
-            print(f"({point[0]:.3f}, {point[1]:.3f}), ", end="")
-        print("\b\b]")  # 移除最後的逗號和空格，並加上右括號
+                    # 複製點並添加到點列表中
+                    replicated_points.extend([(x + x_offset, y + y_offset) for x, y in self.points])
 
-        print(f"\nself.triangles: [ (共 {len(self.triangles)} 個)")
-        for i, triangle in enumerate(self.triangles):
-            if i % 4 == 0 and i != 0:
-                print()  # 每4個三角形換行，增加可讀性
-            print(f"{triangle}, ", end="")
-        print("\b\b]")  # 移除最後的逗號和空格，並加上右括號
+                    # 複製三角形，並更新其頂點索引
+                    num_points = num_original_points * (i + j * num_x_copies)
+                    for triangle in self.triangles:
+                        replicated_triangle = [v + num_points for v in triangle]
+                        replicated_triangles.append(replicated_triangle)
 
-        replicated_triangles = []
-        replicated_points = list(self.points)
-        num_original_points = len(self.points)
+            # 更新 Mesh 物件的屬性
+            self.triangles = replicated_triangles + self.triangles
+            self.points = replicated_points
+            self.triangles_total = len(self.triangles)
 
-        for i in range(num_x_copies):
-            for j in range(num_y_copies):
-                if i == 0 and j == 0:
-                    continue
-
-                # 計算複製的偏移量
-                x_offset = i * x_spacing
-                y_offset = j * y_spacing
-
-                # 複製點並添加到點列表中
-                replicated_points.extend([(x + x_offset, y + y_offset) for x, y in self.points])
-
-                # 複製三角形，並更新其頂點索引
-                num_points = num_original_points * (i + j * num_x_copies)
-                for triangle in self.triangles:
-                    replicated_triangle = [v + num_points for v in triangle]
-                    replicated_triangles.append(replicated_triangle)
-
-        # 更新 Mesh 物件的屬性
-        self.triangles = replicated_triangles + self.triangles
-        self.points = replicated_points
-        self.triangles_total = len(self.triangles)
-
-        # 新增印出語句以顯示最終的結果
-        print(f"\nreplicated_triangles: [ (共 {len(replicated_triangles)} 個)")
-        for i, triangle in enumerate(replicated_triangles):
-            if i % 4 == 0 and i != 0:
-                print()  # 每4個三角形換行，增加可讀性
-            print(f"{triangle}, ", end="")
-        print("\b\b]")  # 移除最後的逗號和空格，並加上右括號
-
-        print(f"\nreplicated_points: [ (共 {len(replicated_points)} 個)")
-        for i, point in enumerate(replicated_points):
-            if i % 4 == 0 and i != 0:
-                print()  # 每4個點換行，增加可讀性
-            print(f"({point[0]:.3f}, {point[1]:.3f}), ", end="")
-        print("\b\b]")  # 移除最後的逗號和空格，並加上右括號
-
-        print(f"\ntriangles_total: {self.triangles_total}")
 
 
    
